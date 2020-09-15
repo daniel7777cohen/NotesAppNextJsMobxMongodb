@@ -40,14 +40,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const note = await Note.create(req.body);
-        console.log(note);
+        console.log(note + " is note");
 
         console.log("note created successfully");
-        res.status(201).json({ success: true, note });
-        break;
+        return res.status(201).send({ success: true, note });
       } catch (error) {
-        res.status(400).json({ success: false, error });
-        break;
+        console.log(error);
+        return res.status(400).json({ success: false, error });
       }
     default:
       res.status(400).json({ success: false });

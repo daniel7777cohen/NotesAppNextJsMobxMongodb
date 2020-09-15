@@ -23,39 +23,39 @@ const Button = styled.button`
   margin-left: 15px;
   cursor: pointer;
 `;
-const CreateNoteTitle = ({ setTitle }) => {
+const CreateNoteTitle = ({ setTitle, notesStore }) => {
+  const [value, setValue] = useState("");
+  debugger;
+  const handleSumbitNodeTitle = () => {
+    setTitle(value);
+    alert(notesStore.getRecenetDate({}));
+  };
 
-    const [value, setValue] = useState("");
-
-    const handleSumbitNodeTitle = () => {
-      setTitle(value);
-    };
-
-    const handleChange = (e) => {
-      e.preventDefault;
-      setValue(e.target.value);
-    };
-    return (
-      <div>
-        <AddTodoWrapper>
-          <Input
-            type="text"
-            onChange={handleChange}
-            name="todo"
-            placeholder="Write your note title here ..."
-          />
-          <Button
-            onClick={() => {
-              handleSumbitNodeTitle();
-            }}
-            type="button"
-            name="addTodo"
-          >
-            Submit
-          </Button>
-        </AddTodoWrapper>
-      </div>
-    );
+  const handleChange = (e) => {
+    e.preventDefault;
+    setValue(e.target.value);
+  };
+  return (
+    <div>
+      <AddTodoWrapper>
+        <Input
+          type="text"
+          onChange={handleChange}
+          name="todo"
+          placeholder="Write your note title here ..."
+        />
+        <Button
+          onClick={() => {
+            handleSumbitNodeTitle();
+          }}
+          type="button"
+          name="addTodo"
+        >
+          Submit
+        </Button>
+      </AddTodoWrapper>
+    </div>
+  );
 };
 
 export default CreateNoteTitle;

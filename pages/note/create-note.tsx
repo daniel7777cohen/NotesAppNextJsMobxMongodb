@@ -45,8 +45,7 @@ export interface INotes {
   }[];
 }
 
-const NewNote = ({notesStore}) => {
-
+const NewNote = ({ notesStore }) => {
   return useObserver(() => {
     const [error, setError] = useState("");
     const [title, setTitle] = useState<string>("");
@@ -67,10 +66,9 @@ const NewNote = ({notesStore}) => {
       try {
         await CreateNewNote(title, todos);
         debugger;
-        notesStore.notes.push(newNote);
         router.push("/");
       } catch (error) {
-        debugger
+        debugger;
         console.log(error);
         // setError(error.data.msg);
       }
@@ -81,7 +79,10 @@ const NewNote = ({notesStore}) => {
         {error && <div>{error}</div>}
         <h2>Set a title for your note</h2>
 
-        <CreateNoteTitle setTitle={setTitle}></CreateNoteTitle>
+        <CreateNoteTitle
+          setTitle={setTitle}
+          notesStore={notesStore}
+        ></CreateNoteTitle>
         {title && (
           <>
             <h1>{title}</h1>

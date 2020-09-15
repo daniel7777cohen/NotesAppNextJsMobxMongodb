@@ -5,17 +5,17 @@ import "antd/dist/antd.css";
 import { fetchNotes } from "../api";
 import { useEffect, useState } from "react";
 import App from "next/app";
-import { NotesStore } from "../mobx/NotesStore";
+import { notesStore, NotesStore } from "../mobx/NotesStore";
 import HomePage from ".";
 import Layout from "../components/Layout";
 
 function MyApp({
   Component,
-  pageProps,
   processedResponse,
   notesStore,
+  pageProps,
 }: AppProps) {
-  debugger;
+  // add to AppProps the right interface of processedResponse
   return (
     <div>
       <Layout>
@@ -42,13 +42,14 @@ function MyApp({
 
 MyApp.getInitialProps = async ({ Component, ctx }) => {
   const processedResponse = await fetchNotes();
-  const notesStore = new NotesStore();
+
   notesStore.setNotes(processedResponse);
   let pageProps = {};
   if (Component.getInitialProps) {
     pageProps = await Component.getInitialProps(ctx);
   }
-  return { pageProps, processedResponse, notesStore };
+  console.log("noteS===" , notesStore);
+  return { notesStore, pageProps };
 };
 
 export default MyApp;

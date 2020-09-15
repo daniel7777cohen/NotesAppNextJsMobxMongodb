@@ -4,10 +4,10 @@ import { getTodos, postTodos, fetchNotes } from "../api";
 import { useStaticRendering } from "mobx-react";
 import { createContext } from "vm";
 
-const isServer = typeof window === "undefined";
+// const isServer = typeof window === "undefined";
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-useStaticRendering(isServer);
+// // eslint-disable-next-line react-hooks/rules-of-hooks
+// useStaticRendering(isServer);
 
 export interface INotes {
   createdAt?: number;
@@ -18,6 +18,7 @@ export interface INotes {
   todos: {
     description: string;
     checked: boolean;
+    id: boolean;
   }[];
 }
 
@@ -33,10 +34,17 @@ export class NotesStore {
     element.todos = newTodos;
   };
 
-  @action getNoteById(id: number) {
-    return this.notes[0];
+  @computed get test() {
+    {console.log("nodeStore222===", this.notes)}
+    {console.log("noteslength==", this.notes.length)}
+    return this.notes.length;
   }
-
+  @action.bound
+  test3() {
+    {console.log("nodeStore33===", this.notes)}
+    {console.log("noteslength333==", this.notes.length)}
+    return this.notes.length;
+  }
   setNotes(notes: INotes[]) {
     this.notes = notes;
   }
@@ -45,4 +53,5 @@ export class NotesStore {
     this.notes = fetchedNotes;
   }
 }
-// export default createContext(observable(new NotesStore()));
+
+export const notesStore = new NotesStore();

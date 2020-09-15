@@ -24,7 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
         const items = await Item.findByIdAndUpdate(
           item_id,
-          {description,checked},
+          { description, checked },
           {
             new: true,
             runValidators: true,

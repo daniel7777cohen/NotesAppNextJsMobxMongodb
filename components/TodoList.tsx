@@ -43,7 +43,6 @@ const TodoList = ({ handleRemoveTodo, todos }) => {
             <li key={index}>
               <ItemWrapper>
                 <div>{todo.item}</div>
-                {/* <Check icon={faCheck}></Check> */}
                 <FAI
                   icon={faTrashAlt}
                   onClick={() => {

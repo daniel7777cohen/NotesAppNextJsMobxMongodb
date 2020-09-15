@@ -25,3 +25,5 @@ export const RootStateProvider: React.FC<React.PropsWithChildren<{}>> = ({
 export const useRootStore = () => {
   return React.useContext(RootStateContext);
 };
+
+// export default notesStore;

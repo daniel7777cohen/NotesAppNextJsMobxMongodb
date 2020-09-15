@@ -12,10 +12,10 @@ export const fetchNotes = async () => {
         );
         const { title, createdAt, updatedAt, _id } = note;
         const todos = todoReponse.data.todos;
+
         processedNotes.push({ _id, title, createdAt, updatedAt, todos });
       }
     }
-
     return processedNotes;
   } catch (error) {
     console.error(error); //handle errors!!!
@@ -24,28 +24,22 @@ export const fetchNotes = async () => {
 };
 
 export const CreateNewNote = async (title: string, todos) => {
+  const noteResponse = await axios.post("http://localhost:3000/api/notes", {
+    title,
+  });
   debugger;
-  try {
-    const noteResponse = await axios.post("http://localhost:3000/api/notes", {
-      title,
-    });
+  if (noteResponse.data.success === true) {
     debugger;
-    if (noteResponse.data.success === true) {
+    for (const todo of todos) {
+      const todoReponse = await axios.post(
+        `http://localhost:3000/api/items/add-item-to-note/${noteResponse.data.note._id}`,
+        {
+          description: todo.item,
+          checked: todo.checked,
+        }
+      );
       debugger;
-      for (const todo of todos) {
-        const todoReponse = await axios.post(
-          `http://localhost:3000/api/items/add-item-to-note/${noteResponse.data.note._id}`,
-          {
-            description: todo.item,
-            checked: todo.checked,
-          }
-        );
-        debugger;
-      }
     }
-  } catch (error) {
-    debugger;
-    console.log(error.data);
   }
 };
 
@@ -80,4 +74,20 @@ export const postTodos = (todos: string[]) => {
     },
     body: JSON.stringify(todos),
   });
+};
+
+export const saveTodosEdit = async (todos: any) => {
+  debugger;
+  for (const todo of todos) {
+    debugger;
+    const todoResponse = await axios.put(
+      `http://localhost:3000/api/items/edit-item/${todo._id}`,
+      {
+        checked: todo.checked,
+        description: todo.description,
+      }
+    );
+    debugger;
+
+  }
 };
