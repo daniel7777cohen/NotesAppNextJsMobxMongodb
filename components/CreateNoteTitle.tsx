@@ -28,7 +28,6 @@ const CreateNoteTitle = ({ setTitle, notesStore }) => {
   debugger;
   const handleSumbitNodeTitle = () => {
     setTitle(value);
-    alert(notesStore.getRecenetDate({}));
   };
 
   const handleChange = (e) => {
