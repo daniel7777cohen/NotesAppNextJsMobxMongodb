@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
       <Wrapper className="layout" style={{ height: "100%" }} >
         <Header>
           <div className="logo" />
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
+          <Menu theme="dark" mode="horizontal" >
             <Menu.Item key="1">
               <Link href="/">
                 <a>HOME</a>

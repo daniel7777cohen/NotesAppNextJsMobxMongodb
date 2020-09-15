@@ -3,7 +3,7 @@ import type { AppProps /*, AppContext */, AppContext } from "next/app";
 import { RootStateProvider, useRootStore } from "../context/RootStateContext";
 import "antd/dist/antd.css";
 import { fetchNotes } from "../api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import App from "next/app";
 import { NotesStore } from "../mobx/NotesStore";
 import HomePage from ".";
@@ -15,11 +15,7 @@ function MyApp({
   processedResponse,
   notesStore,
 }: AppProps) {
-  console.log(notesStore);
-
-  useEffect(() => {
-    
-  }, []);
+  debugger;
   return (
     <div>
       <Layout>
@@ -44,15 +40,10 @@ function MyApp({
   );
 }
 
-
-
 MyApp.getInitialProps = async ({ Component, ctx }) => {
   const processedResponse = await fetchNotes();
-
   const notesStore = new NotesStore();
-  console.log("new store created");
   notesStore.setNotes(processedResponse);
-
   let pageProps = {};
   if (Component.getInitialProps) {
     pageProps = await Component.getInitialProps(ctx);
