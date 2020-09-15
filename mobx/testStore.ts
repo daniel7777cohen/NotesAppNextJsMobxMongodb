@@ -41,6 +41,11 @@ class NotesStore {
   @action setNotes(notes) {
     this.notes = notes;
   }
+  // @computed get test() {
+  //   {console.log("nodeStore222===", this.notes)}
+  //   {console.log("noteslength==", this.notes.length)}
+  //   return this.notes.length;
+  // }
 }
 
 export default NotesStore;

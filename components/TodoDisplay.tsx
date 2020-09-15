@@ -5,10 +5,8 @@ const TodoDisplay = ({ todo, index }) => {
   const [checkedItem, setCheckedItem] = useState(todo.checked);
 
   const onChange = (todo) => (e) => {
-    // notesStore.setChecked(todo);
     todo.checked = e.target.checked;
     setCheckedItem(e.target.checked);
-    debugger;
     console.log(todo.checked);
   };
   return (

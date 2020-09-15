@@ -27,9 +27,8 @@ export const CreateNewNote = async (title: string, todos) => {
   const noteResponse = await axios.post("http://localhost:3000/api/notes", {
     title,
   });
-  debugger;
+
   if (noteResponse.data.success === true) {
-    debugger;
     for (const todo of todos) {
       const todoReponse = await axios.post(
         `http://localhost:3000/api/items/add-item-to-note/${noteResponse.data.note._id}`,
@@ -38,7 +37,6 @@ export const CreateNewNote = async (title: string, todos) => {
           checked: todo.checked,
         }
       );
-      debugger;
     }
   }
 };
@@ -56,7 +54,6 @@ export const getTodosByNoteId = async (note_id: string) => {
 };
 
 export const deleteNote = async (note_id: number) => {
-  debugger;
   const res = await axios.delete(`http://localhost:3000/api/notes/${note_id}`);
   return res.data;
 };
@@ -77,9 +74,7 @@ export const postTodos = (todos: string[]) => {
 };
 
 export const saveTodosEdit = async (todos: any) => {
-  debugger;
   for (const todo of todos) {
-    debugger;
     const todoResponse = await axios.put(
       `http://localhost:3000/api/items/edit-item/${todo._id}`,
       {
@@ -87,7 +82,5 @@ export const saveTodosEdit = async (todos: any) => {
         description: todo.description,
       }
     );
-    debugger;
-
   }
 };

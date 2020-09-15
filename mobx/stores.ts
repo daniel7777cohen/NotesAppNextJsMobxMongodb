@@ -1,6 +1,6 @@
 import { useStaticRendering } from "mobx-react";
 
-import NotesStore, { INotes } from "./testStore";
+import {NotesStore, INotes } from "./NotesStore";
 
 const isServer = typeof window === "undefined";
 useStaticRendering(isServer);

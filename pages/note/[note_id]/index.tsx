@@ -1,17 +1,11 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import {
-  getNoteById,
-  getTodosByNoteId,
-  deleteNote,
-  saveTodosEdit,
-} from "../../../api";
+import { deleteNote, saveTodosEdit } from "../../../api";
 import styled from "styled-components";
-import { Checkbox } from "antd";
 import Link from "next/link";
 import { ButtonStyled } from "../..";
 import { useObserver } from "mobx-react";
-import TodoDisplay from "../../../components/todoDisplay";
+import TodoDisplay from "../../../components/TodoDisplay";
+import { useStore } from "../../../context/StoreContext";
 
 const Button = styled.button`
   color: white;
@@ -24,16 +18,10 @@ const Button = styled.button`
   margin-left: 15px;
   cursor: pointer;
 `;
-const NoteDisplay = ({
-  note,
-  todos,
-  processedResponse,
-  notesStore,
-  note_id,
-}) => {
-  return useObserver(() => {
-    const router = useRouter();
+const NoteDisplay = ({ note_id }) => {
+  const notesStore = useStore();
 
+  return useObserver(() => {
     const [currentNote, setCurrentNote] = useState(null);
     const [confirm, setConfirm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -42,14 +30,12 @@ const NoteDisplay = ({
 
     useEffect(() => {
       const notes = notesStore.notes;
-      const filteredNote = notes.find((note) => note._id === note_id);
-      setCurrentNote(filteredNote);
+      const noteToDisplay = notes.find((note) => note._id === note_id);
+      setCurrentNote(noteToDisplay);
       setIsPageLoaded(true);
     }, []);
 
     const handleDelete = async () => {
-      //remove from db
-      // remove from store
       try {
         await deleteNote(currentNote._id);
         setIsDeleted(true);
@@ -59,16 +45,11 @@ const NoteDisplay = ({
     };
 
     const onChange = (todo) => (e) => {
-      // notesStore.setChecked(todo);
+      e.preventDefault;
       todo.checked = e.target.checked;
-      debugger;
-      console.log(todo.checked);
     };
 
     const setDone = async () => {
-      //change done at store
-
-      //save at db
       try {
         await saveTodosEdit(currentNote.todos);
       } catch (error) {}
