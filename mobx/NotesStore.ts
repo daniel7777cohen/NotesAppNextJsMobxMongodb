@@ -1,8 +1,5 @@
 import { observable, action, computed } from "mobx";
-import { getTodos, postTodos, fetchNotes } from "../api";
-
-import { useStaticRendering } from "mobx-react";
-import { createContext } from "vm";
+import { deleteNote } from "../api";
 
 export interface INotes {
   createdAt?: number;
@@ -24,9 +21,14 @@ export class NotesStore {
     this.notes = initialData.notes;
   }
 
-  @action addNewNote = (note: INotes) => {
-    this.notes.push(note);
-  };
+  // @action addNewNote = (note: INotes) => {
+  //   this.notes.push(note);
+  // };
+
+  async deleteNote(id: number) {
+    debugger;
+    await deleteNote(id);
+  }
 
   setNotes(notes: INotes[]) {
     this.notes = notes;

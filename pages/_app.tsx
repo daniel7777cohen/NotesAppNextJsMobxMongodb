@@ -2,16 +2,22 @@ import initializeStore from "../mobx/stores";
 import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
 import { fetchNotes } from "../api";
-import Layout from "../components/Layout";
+import Layout from "../components/Layout/Layout";
 import { StoreProvider } from "../context/StoreContext";
+import "../css-general/index.css";
+import "../css-general/normalize.css";
+import { NotesStore } from "../mobx/NotesStore";
 
-function MyApp({ Component, notesStore, pageProps }: AppProps) {
-  // add to AppProps the right interface of processedResponse
+function MyApp({
+  Component,
+  notesStore,
+  pageProps,
+}: AppProps & { notesStore: NotesStore }) {
   return (
     <div>
       <StoreProvider value={notesStore}>
         <Layout>
-          <Component {...pageProps}></Component>
+          <Component {...pageProps} ></Component>
         </Layout>
       </StoreProvider>
 
@@ -38,7 +44,7 @@ MyApp.getInitialProps = async ({ Component, ctx }) => {
   if (Component.getInitialProps) {
     pageProps = await Component.getInitialProps(ctx);
   }
-  
+
   return { notesStore, pageProps };
 };
 

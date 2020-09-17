@@ -2,17 +2,16 @@ import Item from "../../../../db/models/Item";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import connectDb from "../../../../db/connection";
-import Note from "../../../../db/models/Note";
 
 connectDb();
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
-    query: { item_id }, //whats on the dynamic route
+    query: { item_id },
     method,
   } = req;
 
-  const { description, checked } = req.body;
+  const { checked } = req.body;
   switch (method) {
     case "PUT":
       try {
@@ -24,10 +23,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
         const items = await Item.findByIdAndUpdate(
           item_id,
-          { description, checked },
+          { checked },
           {
             new: true,
-            runValidators: true,
+            runValidators: false,
           }
         );
 

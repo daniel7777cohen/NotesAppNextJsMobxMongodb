@@ -1,31 +1,16 @@
 import { useState, useEffect } from "react";
-import { deleteNote, saveTodosEdit } from "../../../api";
-import styled from "styled-components";
-import Link from "next/link";
-import { ButtonStyled } from "../..";
+import { saveTodosStatuses } from "../../../api";
 import { useObserver } from "mobx-react";
-import TodoDisplay from "../../../components/TodoDisplay";
 import { useStore } from "../../../context/StoreContext";
+import TodoList from "../../../components/Layout/TodoList";
+import { TodoListTitle } from "../../../styled-components";
 
-const Button = styled.button`
-  color: white;
-  background: red;
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  padding: 5px;
-  border-radius: 6px;
-  margin-left: 15px;
-  cursor: pointer;
-`;
+
 const NoteDisplay = ({ note_id }) => {
   const notesStore = useStore();
 
   return useObserver(() => {
     const [currentNote, setCurrentNote] = useState(null);
-    const [confirm, setConfirm] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [isDeleted, setIsDeleted] = useState(false);
     const [isPageLoaded, setIsPageLoaded] = useState(false);
 
     useEffect(() => {
@@ -35,55 +20,24 @@ const NoteDisplay = ({ note_id }) => {
       setIsPageLoaded(true);
     }, []);
 
-    const handleDelete = async () => {
+    const onSaveClicked = async () => {
+      debugger;
       try {
-        await deleteNote(currentNote._id);
-        setIsDeleted(true);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const onChange = (todo) => (e) => {
-      e.preventDefault;
-      todo.checked = e.target.checked;
-    };
-
-    const setDone = async () => {
-      try {
-        await saveTodosEdit(currentNote.todos);
+        await saveTodosStatuses(currentNote.todos);
       } catch (error) {}
     };
 
     return (
       <div>
-        {isDeleted && (
+        {isPageLoaded ? (
           <div>
-            Note deleted succesfully
-            <ButtonStyled>
-              <Link href={`/`}>
-                <a>Back To Home Page</a>
-              </Link>
-            </ButtonStyled>
-          </div>
-        )}
-        {isPageLoaded && isDeleting && !isDeleted ? (
-          <div>
-            <span>are you sure you want to delete the current note?</span>
-            <Button onClick={() => handleDelete()}>YES</Button>
-            <Button onClick={() => setIsDeleting(false)}>NO</Button>
-          </div>
-        ) : !isDeleted && isPageLoaded ? (
-          <div>
-            <h1>{currentNote.title}</h1>
+            <TodoListTitle >{currentNote.title}</TodoListTitle>
+            <TodoList
+              onSaveClicked={onSaveClicked}
+              todos={currentNote.todos}
+              isViewPage={true}
+            ></TodoList>
             <br />
-            <ul>
-              {currentNote.todos.map((todo, index: number) => {
-                return <TodoDisplay todo={todo} index={index}></TodoDisplay>;
-              })}
-            </ul>
-            <Button onClick={() => setIsDeleting(true)}>Delete Note</Button>
-            <Button onClick={() => setDone()}>Save</Button>
           </div>
         ) : null}
       </div>

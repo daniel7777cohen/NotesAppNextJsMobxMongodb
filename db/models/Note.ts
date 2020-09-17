@@ -6,7 +6,7 @@ const NoteSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a title"],
       trim: true,
-      maxlength: [50, `Title's length cant exceed 50 characters!`],
+      maxlength: [16, `Title's length cant exceed 16 characters!`],
     },
     deleted: {
       type: Boolean,

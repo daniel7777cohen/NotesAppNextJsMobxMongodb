@@ -1,5 +1,6 @@
 import axios from "axios";
 import { INotes } from "./mobx/NotesStore";
+import { Todo } from "./components/create-note/CreateNote";
 
 export const fetchNotes = async () => {
   try {
@@ -23,18 +24,19 @@ export const fetchNotes = async () => {
   }
 };
 
-export const CreateNewNote = async (title: string, todos) => {
+export const createNewNote = async (title: string, todos) => {
   const noteResponse = await axios.post("http://localhost:3000/api/notes", {
     title,
   });
 
   if (noteResponse.data.success === true) {
     for (const todo of todos) {
+      const { description, checked } = todo;
       const todoReponse = await axios.post(
         `http://localhost:3000/api/items/add-item-to-note/${noteResponse.data.note._id}`,
         {
-          description: todo.item,
-          checked: todo.checked,
+          description,
+          checked,
         }
       );
     }
@@ -73,13 +75,14 @@ export const postTodos = (todos: string[]) => {
   });
 };
 
-export const saveTodosEdit = async (todos: any) => {
+export const saveTodosStatuses = async (todos: Todo[]) => {
+  debugger;
+
   for (const todo of todos) {
     const todoResponse = await axios.put(
       `http://localhost:3000/api/items/edit-item/${todo._id}`,
       {
         checked: todo.checked,
-        description: todo.description,
       }
     );
   }

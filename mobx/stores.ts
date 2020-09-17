@@ -1,19 +1,22 @@
-import { useStaticRendering } from "mobx-react";
+//implementaion built for having multiple stores!
 
-import {NotesStore, INotes } from "./NotesStore";
+import { useStaticRendering } from "mobx-react";
+import { NotesStore } from "./NotesStore";
 
 const isServer = typeof window === "undefined";
 useStaticRendering(isServer);
 
-let store = null;
+let store: {
+  notesStore: NotesStore;
+} = null;
 
 export default function initializeStore(
   initialData = { notesStore: {} as NotesStore }
 ) {
   if (isServer) {
-    return {
+    return (store = {
       notesStore: new NotesStore(initialData.notesStore),
-    };
+    });
   }
   if (store === null) {
     store = {
