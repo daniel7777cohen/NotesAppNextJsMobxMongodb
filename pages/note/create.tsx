@@ -28,7 +28,7 @@ const NewNote = observer(({ notesStore }: { notesStore: NotesStore }) => {
       {isNotesFull ? (
         <EditNote handleSave={handleSave}></EditNote>
       ) : (
-        <div>hello</div>
+        <div>You have reached the maximum amount of notes</div>
       )}
     </>
   );
