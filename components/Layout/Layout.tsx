@@ -18,7 +18,7 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
             </Menu.Item>
             <Menu.Item key="2">
               {" "}
-              <Link href="/note">
+              <Link href="/note/create">
                 <a>ADD NOTE</a>
               </Link>
             </Menu.Item>
