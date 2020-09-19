@@ -24,7 +24,7 @@ export const fetchNotes = async () => {
 };
 
 export const createNewNote = async (title: string, todos: TodoForm[]) => {
-  const noteResponse = await axios.post("http://localhost:3000/api/notes", {
+  const noteResponse = await axios.post("https://nots-app-next-js-mobx-mongodb-lhej1etsk.vercel.app/api/notes", {
     title,
   });
   debugger;
