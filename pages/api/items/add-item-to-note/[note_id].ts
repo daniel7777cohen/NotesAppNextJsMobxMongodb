@@ -25,10 +25,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             .status(400)
             .json({ success: false, msg: "unable to find the relevant note" });
         }
-        const items = await Item.create({ description, checked, note_id });
-        console.log(items + " is note inside Items path");
+        const newTodo = await Item.create({ description, checked, note_id });
+        console.log(newTodo + " is todo inside Items path");
 
-        res.status(201).json({ success: true, data: items });
+        res.status(201).json({ success: true, newTodo });
       } catch (error) {
         res.status(400).json({ success: error.message });
       }

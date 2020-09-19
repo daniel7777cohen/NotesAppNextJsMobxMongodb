@@ -1,8 +1,9 @@
 import { TodoListWrapper, Ul, Button } from "../../styled-components";
-import { Todo } from "../create-note/CreateNote";
 import TodoDisplay from "./TodoDisplay";
+import { Todo } from "../../interfaces";
+import { observer } from "mobx-react-lite";
 
-const TodoList = ({
+const TodoList = observer(({
   handleRemoveTodo,
   todos,
   onSaveClicked,
@@ -31,11 +32,11 @@ const TodoList = ({
       </Ul>
       {todos.length > 0 && (
         <Button isSavedButton={true} onClick={onSaveClicked}>
-          Done
+          Save 
         </Button>
       )}
     </TodoListWrapper>
   );
-};
+});
 
 export default TodoList;

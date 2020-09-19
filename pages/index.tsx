@@ -1,55 +1,47 @@
-import { useStore } from "../context/StoreContext";
 import Link from "next/link";
-import { useObserver } from "mobx-react-lite";
 import { ButtonStyled, CardWrapper, Row } from "../styled-components";
-import { deleteNote } from "../api";
 import CardDisplay from "../components/Layout/CardDisplay";
+import { observer } from "mobx-react-lite";
+import { IStore, Note } from "../interfaces";
 
-export const HomePage = () => {
-  const notesStore = useStore();
+export const HomePage = observer(({ notesStore }: IStore) => {
+  const notes = notesStore.notes;
+  const handleDelete = async (id: number, index: number) => {
+    try {
+      await notesStore.deleteNote(id, index);
+    } catch (error) {
+      //Todo handle
+    }
+  };
 
-  return useObserver(() => {
-    const handleDelete = async (id: number) => {
-      try {
-        debugger;
-        notesStore.setNotes(null);
-        await notesStore.deleteNote(id);
-      } catch (error) {
-        debugger;
-        console.log(error);
-      }
-    };
-
-    return (
-      <CardWrapper>
-        {notesStore.notes && notesStore.notes.length > 0 ? (
-          <Row gutter={16}>
-            {notesStore.notes.map((note, index) => {
-              return (
-                <CardDisplay
-                  key={index}
-                  children
-                  note={note}
-                  index={index}
-                  handleDelete={handleDelete}
-                ></CardDisplay>
-              );
-            })}
-          </Row>
-        ) : (
-          <div>
-            You have no notes to display. <br />
-            to create a new note <br />
-            <ButtonStyled type="primary">
-              <Link href="/note/create-note">
-                <a>click here !</a>
-              </Link>
-            </ButtonStyled>
-          </div>
-        )}
-      </CardWrapper>
-    );
-  });
-};
+  return (
+    <CardWrapper>
+      {notes && notes.length > 0 ? (
+        <Row gutter={16}>
+          {notes.map((note: Note, index: number) => {
+            return (
+              <CardDisplay
+                index={index}
+                children
+                note={note}
+                handleDelete={handleDelete}
+              ></CardDisplay>
+            );
+          })}
+        </Row>
+      ) : (
+        <div>
+          You have no notes to display. <br />
+          to create a new note <br />
+          <ButtonStyled type="primary">
+            <Link href="/note/create">
+              <a>click here !</a>
+            </Link>
+          </ButtonStyled>
+        </div>
+      )}
+    </CardWrapper>
+)});
 
 export default HomePage;
+

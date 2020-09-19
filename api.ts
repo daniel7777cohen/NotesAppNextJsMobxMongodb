@@ -1,6 +1,5 @@
 import axios from "axios";
-import { INotes } from "./mobx/NotesStore";
-import { Todo } from "./components/create-note/CreateNote";
+import { Todo, Note, TodoForm } from "./interfaces";
 
 export const fetchNotes = async () => {
   try {
@@ -20,29 +19,52 @@ export const fetchNotes = async () => {
     return processedNotes;
   } catch (error) {
     console.error(error); //handle errors!!!
-    return {} as INotes[];
+    return {} as Note[];
   }
 };
 
-export const createNewNote = async (title: string, todos) => {
+
+
+export const createNewNote = async (title: string, todos: TodoForm[]) => {
   const noteResponse = await axios.post("http://localhost:3000/api/notes", {
     title,
   });
-
+  debugger;
   if (noteResponse.data.success === true) {
-    for (const todo of todos) {
-      const { description, checked } = todo;
-      const todoReponse = await axios.post(
-        `http://localhost:3000/api/items/add-item-to-note/${noteResponse.data.note._id}`,
-        {
-          description,
-          checked,
-        }
-      );
-    }
+    const { newNote } = noteResponse.data;
+    debugger;
+    const processedNewTodos = await getProcessedNewTodos(
+      todos,
+      newNote._id
+    );
+    debugger;
+    return {
+      ...newNote,
+      todos: processedNewTodos,
+    };
   }
 };
 
+const getProcessedNewTodos = async (todos: TodoForm[], noteId: string) => {
+  const processedNewTodos = [] as Todo[];
+
+  for (const todo of todos) {
+    const { description, checked } = todo;
+    const todoResponse = await axios.post(
+      `http://localhost:3000/api/items/add-item-to-note/${noteId}`,
+      {
+        description,
+        checked,
+      }
+    );
+    if (todoResponse.data.success) {
+      const { newTodo } = todoResponse.data;
+      processedNewTodos.push(newTodo);
+    }
+  }
+
+  return processedNewTodos;
+};
 export const getNoteById = async (note_id: string) => {
   const res = await axios.get(`http://localhost:3000/api/notes/${note_id}`);
   return res.data;
@@ -76,8 +98,6 @@ export const postTodos = (todos: string[]) => {
 };
 
 export const saveTodosStatuses = async (todos: Todo[]) => {
-  debugger;
-
   for (const todo of todos) {
     const todoResponse = await axios.put(
       `http://localhost:3000/api/items/edit-item/${todo._id}`,

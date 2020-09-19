@@ -26,11 +26,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           deleted: false,
         });
 
-        console.log(title + " is title");
-
-        console.log(noteExistsResponse);
-        console.log("is noteExistsResponse");
-
         if (noteExistsResponse) {
           console.log("note title exsists!");
           return res.status(400).send({
@@ -39,11 +34,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           });
         }
 
-        const note = await Note.create(req.body);
-        console.log(note + " is note");
+        const newNote = await Note.create(req.body);
 
-        console.log("note created successfully");
-        return res.status(201).send({ success: true, note });
+        return res.status(201).send({ success: true, newNote });
       } catch (error) {
         console.log(error);
         return res.status(400).json({ success: false, error });

@@ -2,15 +2,12 @@ import React from "react";
 import CreateTodo from "./CreateTodo";
 import TodoList from "../Layout/TodoList";
 import CreateNoteTitle from "./CreateNoteTitle";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { Box, Button, Paragraph, TodoListTitle } from "../../styled-components";
+import { Todo } from "../../interfaces";
 
-export interface Todo {
-  description: string;
-  checked: boolean;
-  _id?: number;
-}
+
 
 const EditNote = ({
   todosToEdit,
@@ -34,6 +31,8 @@ const EditNote = ({
   const [todos, setTodos] = useState<Todo[]>(todosToEdit || []);
   const router = useRouter();
   
+
+
   const handleRemoveTodo = (index: number) => {
     setTodos((prev) => {
       const newTodos = [...prev];

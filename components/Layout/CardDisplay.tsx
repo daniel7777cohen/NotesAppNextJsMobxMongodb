@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import moment from "moment";
 import "moment-timezone";
-import { useObserver } from "mobx-react-lite";
 import {
   CardStyled,
   Title,
@@ -14,15 +13,14 @@ import {
   WarningText,
   WarningButtonsWrapper,
 } from "../../styled-components";
-import styled from "styled-components";
 import { useState } from "react";
 import { faTrashAlt, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon as FAI } from "@fortawesome/react-fontawesome";
-import { deleteNote } from "../../api";
+import { Note } from "../../interfaces";
 
 const CardDisplay = ({ children, note, index, handleDelete }) => {
   const [isDeleting, setIsDeleting] = useState(false);
-  const getRecentUpdateDate = (note) => {
+  const getRecentUpdateDate = (note:Note) => {
     return Math.max.apply(
       Math,
       note.todos.map((note) => {
@@ -31,8 +29,8 @@ const CardDisplay = ({ children, note, index, handleDelete }) => {
     );
   };
 
-  const createdAt = moment.unix(note.createdAt).format("MM/DD/YYYY hh:mm A");
-  const updatedAt = moment
+  const createdAtFormatted = moment.unix(note.createdAt).format("MM/DD/YYYY hh:mm A");
+  const updatedAtFormatted = moment
     .unix(getRecentUpdateDate(note))
     .format("MM/DD/YYYY hh:mm A");
   return (
@@ -50,8 +48,8 @@ const CardDisplay = ({ children, note, index, handleDelete }) => {
         bordered={false}
       >
         <CardBodyWrapper>
-          <DateText>created : {createdAt}</DateText> <br />
-          <DateText>updated : {updatedAt}</DateText>
+          <DateText>created : {createdAtFormatted}</DateText> <br />
+          <DateText>updated : {updatedAtFormatted}</DateText>
           {!isDeleting && (
             <IconWrapper>
               <FAI
@@ -70,7 +68,7 @@ const CardDisplay = ({ children, note, index, handleDelete }) => {
               <WarningButtonsWrapper>
                 <ButtonWarning
                   onClick={() => {
-                    handleDelete(note._id);
+                    handleDelete(note._id,index);
                     setIsDeleting(false);
                   }}
                 >

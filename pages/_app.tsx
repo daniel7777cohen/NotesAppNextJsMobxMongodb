@@ -1,25 +1,34 @@
-import initializeStore from "../mobx/stores";
 import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
-import { fetchNotes } from "../api";
 import Layout from "../components/Layout/Layout";
-import { StoreProvider } from "../context/StoreContext";
 import "../css-general/index.css";
 import "../css-general/normalize.css";
-import { NotesStore } from "../mobx/NotesStore";
+import { withMobx } from "next-mobx-wrapper";
+import { configure } from "mobx";
+import { Provider, useStaticRendering } from "mobx-react";
+import * as getStores from "../mobx";
+import { Store, Note } from "../interfaces";
+
+const isServer = !process.browser;
+
+configure({ enforceActions: "observed" });
+useStaticRendering(isServer); // NOT `true` value
+
 
 function MyApp({
   Component,
-  notesStore,
+  store,
   pageProps,
-}: AppProps & { notesStore: NotesStore }) {
+  notes,
+}: AppProps & { store: Store; notes: Note[] }) {
+  store.notesStore.setNotes(notes);
   return (
     <div>
-      <StoreProvider value={notesStore}>
+      <Provider {...store}>
         <Layout>
-          <Component {...pageProps} ></Component>
+          <Component {...pageProps} {...store}></Component>
         </Layout>
-      </StoreProvider>
+      </Provider>
 
       <style global jsx>{`
         html,
@@ -35,17 +44,23 @@ function MyApp({
   );
 }
 
-MyApp.getInitialProps = async ({ Component, ctx }) => {
-  const { notesStore } = initializeStore();
-  const processedResponse = await fetchNotes();
-  notesStore.setNotes(processedResponse);
-
+MyApp.getInitialProps = async ({
+  Component,
+  ctx,
+}: {
+  Component: any;
+  ctx: any;
+}) => {
+  
+  const notesStore = getStores.getNotesStore();
+  await notesStore.fetchAndSetNotes();
+  const notes = notesStore.getNotes();
   let pageProps = {};
   if (Component.getInitialProps) {
     pageProps = await Component.getInitialProps(ctx);
   }
 
-  return { notesStore, pageProps };
+  return { pageProps, notes };
 };
 
-export default MyApp;
+export default withMobx(getStores)(MyApp);

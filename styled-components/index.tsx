@@ -167,6 +167,7 @@ export const CardStyled = styled(Card)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 45px;
 
   && .ant-card-head {
     border-bottom: 0;

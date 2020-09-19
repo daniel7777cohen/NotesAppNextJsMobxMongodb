@@ -15,7 +15,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "downlevelIteration": true
-    
   },
   "exclude": ["node_modules"],
   "include": [

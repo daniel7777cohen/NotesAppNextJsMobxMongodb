@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
+
 import {
   faTrashAlt,
   faThumbsDown,
@@ -6,49 +7,56 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon as FAI } from "@fortawesome/react-fontawesome";
 import { ItemWrapper } from "../../styled-components";
-import { Todo } from "../create-note/CreateNote";
+import { Todo } from "../../interfaces";
+import * as getStores from "../../mobx";
+import { observer } from "mobx-react-lite";
+import { MobXProviderContext } from "mobx-react";
 
-const TodoDisplay = ({
-  todo,
-  isViewPage,
-  index,
-  handleRemoveTodo,
-}: {
-  handleRemoveTodo?: (index: number) => void;
-  index?: number;
-  isViewPage?: boolean;
-  todo: Todo;
-}) => {
-  const [checkedItem, setCheckedItem] = useState(todo.checked);
+const TodoDisplay = observer(
+  ({
+    todo,
+    isViewPage,
+    index,
+    handleRemoveTodo,
+  }: {
+    handleRemoveTodo?: (index: number) => void;
+    index?: number;
+    isViewPage?: boolean;
+    todo: Todo;
+  }) => {
+    const {
+      notesStore: { toggleTodoStatus },
+    } = useContext(MobXProviderContext);
 
-  const onChange = (todo) => {
-    debugger;
-    todo.checked = !checkedItem;
-    setCheckedItem(!checkedItem);
-  };
-  
-  return (
-    <div>
-      <ItemWrapper>
-        <div>{todo.description}</div>
-        {!isViewPage ? (
-          <FAI
-            icon={faTrashAlt}
-            onClick={() => {
-              handleRemoveTodo(index);
-            }}
-          ></FAI>
-        ) : (
-          <FAI
-            icon={checkedItem ? faThumbsUp : faThumbsDown}
-            onClick={() => {
-              onChange(todo);
-            }}
-          ></FAI>
-        )}
-      </ItemWrapper>
-    </div>
-  );
-};
+    // const notesStore = getStores.getNotesStore();
+
+    const onChange = (todo: Todo) => {
+      toggleTodoStatus(todo);
+    };
+
+    return (
+      <div>
+        <ItemWrapper>
+          <div>{todo.description}</div>
+          {!isViewPage ? (
+            <FAI
+              icon={faTrashAlt}
+              onClick={() => {
+                handleRemoveTodo(index);
+              }}
+            ></FAI>
+          ) : (
+            <FAI
+              icon={todo.checked ? faThumbsUp : faThumbsDown}
+              onClick={() => {
+                onChange(todo);
+              }}
+            ></FAI>
+          )}
+        </ItemWrapper>
+      </div>
+    );
+  }
+);
 
 export default TodoDisplay;

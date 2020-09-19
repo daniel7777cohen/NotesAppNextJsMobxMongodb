@@ -18,7 +18,7 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
             </Menu.Item>
             <Menu.Item key="2">
               {" "}
-              <Link href="/note/create">
+              <Link href="/note">
                 <a>ADD NOTE</a>
               </Link>
             </Menu.Item>
@@ -39,7 +39,7 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
         >
           <div className="site-layout-content"> {children}</div>
           <FooterStyled style={{ textAlign: "center", width: "100%" }}>
-            Ant Design ©2018 Created by Ant UED
+            Notes App written by DC
           </FooterStyled>
         </Content>
       </Wrapper>

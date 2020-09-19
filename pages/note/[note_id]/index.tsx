@@ -1,29 +1,32 @@
 import { useState, useEffect } from "react";
-import { saveTodosStatuses } from "../../../api";
-import { useObserver } from "mobx-react";
-import { useStore } from "../../../context/StoreContext";
 import TodoList from "../../../components/Layout/TodoList";
 import { TodoListTitle } from "../../../styled-components";
+import { observer } from "mobx-react-lite";
+import { NextPage, NextPageContext } from "next";
+import { NotesStore } from "../../../mobx/NotesStore";
 
+interface INoteDisplay {
+  note_id: string | string[];
+}
 
-const NoteDisplay = ({ note_id }) => {
-  const notesStore = useStore();
+interface Context extends NextPageContext, INoteDisplay {
+}
 
-  return useObserver(() => {
+export const NoteDisplay: NextPage<INoteDisplay> = observer(
+  ({ notesStore, note_id }: { note_id: string; notesStore: NotesStore }) => {
+
     const [currentNote, setCurrentNote] = useState(null);
     const [isPageLoaded, setIsPageLoaded] = useState(false);
 
     useEffect(() => {
-      const notes = notesStore.notes;
-      const noteToDisplay = notes.find((note) => note._id === note_id);
+      const noteToDisplay = notesStore.getNoteById(note_id);
       setCurrentNote(noteToDisplay);
       setIsPageLoaded(true);
     }, []);
 
     const onSaveClicked = async () => {
-      debugger;
       try {
-        await saveTodosStatuses(currentNote.todos);
+        await notesStore.savetodosEdit(currentNote.todos);
       } catch (error) {}
     };
 
@@ -31,10 +34,10 @@ const NoteDisplay = ({ note_id }) => {
       <div>
         {isPageLoaded ? (
           <div>
-            <TodoListTitle >{currentNote.title}</TodoListTitle>
+            <TodoListTitle>{notesStore.getNoteById(note_id).title.toUpperCase()}</TodoListTitle>
             <TodoList
               onSaveClicked={onSaveClicked}
-              todos={currentNote.todos}
+              todos={notesStore.getNoteById(note_id).todos}
               isViewPage={true}
             ></TodoList>
             <br />
@@ -42,10 +45,11 @@ const NoteDisplay = ({ note_id }) => {
         ) : null}
       </div>
     );
-  });
-};
+  }
+);
 
-NoteDisplay.getInitialProps = async ({ query: { note_id } }) => {
+NoteDisplay.getInitialProps = async ({ query: { note_id } }: Context) => {
+
   return { note_id };
 };
 
