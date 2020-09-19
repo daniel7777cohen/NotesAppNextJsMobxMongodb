@@ -1,6 +1,4 @@
-import { useObserver } from "mobx-react-lite";
 import EditNote from "../../components/create-note/CreateNote";
-import { createNewNote } from "../../api";
 import {  TodoForm } from "../../interfaces";
 import { observer } from "mobx-react-lite";
 import { NotesStore } from "../../mobx/NotesStore";
