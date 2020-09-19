@@ -1,8 +1,9 @@
 import { Layout as Wrapper, Menu, Breadcrumb } from "antd";
 import Link from "next/link";
 import { FooterStyled } from "../../styled-components";
+import { observer } from "mobx-react-lite";
 
-const Layout = ({ children }: { children?: React.ReactNode }) => {
+const Layout = observer(({ children }: { children?: React.ReactNode }) => {
   const { Header, Footer, Sider, Content } = Wrapper;
 
   return (
@@ -32,19 +33,20 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
         </Header>
         <Content
           style={{
-            padding: "0 50px",
+            paddingLeft:"38px",
+            paddingRight: "50px",
             marginBottom: "5rem",
             backgroundColor: "#f0f2f5",
           }}
         >
           <div className="site-layout-content"> {children}</div>
-          <FooterStyled style={{ textAlign: "center", width: "100%" }}>
+          <FooterStyled >
             Notes App written by DC
           </FooterStyled>
         </Content>
       </Wrapper>
     </>
   );
-};
+});
 
 export default Layout;

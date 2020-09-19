@@ -23,8 +23,6 @@ export const fetchNotes = async () => {
   }
 };
 
-
-
 export const createNewNote = async (title: string, todos: TodoForm[]) => {
   const noteResponse = await axios.post("http://localhost:3000/api/notes", {
     title,
@@ -33,10 +31,7 @@ export const createNewNote = async (title: string, todos: TodoForm[]) => {
   if (noteResponse.data.success === true) {
     const { newNote } = noteResponse.data;
     debugger;
-    const processedNewTodos = await getProcessedNewTodos(
-      todos,
-      newNote._id
-    );
+    const processedNewTodos = await getProcessedNewTodos(todos, newNote._id);
     debugger;
     return {
       ...newNote,
@@ -77,7 +72,7 @@ export const getTodosByNoteId = async (note_id: string) => {
   return res.data;
 };
 
-export const deleteNote = async (note_id: number) => {
+export const deleteNote = async (note_id: string) => {
   const res = await axios.delete(`http://localhost:3000/api/notes/${note_id}`);
   return res.data;
 };

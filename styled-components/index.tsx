@@ -116,7 +116,12 @@ export const FooterStyled = styled(Footer)`
   position: auto;
   bottom: 0;
   position: fixed;
-  text-align: center;
+  text-align: center;  
+  font-weight: bold;
+  font-family: cursive;
+  font-size: large;
+  width:100%;
+}
 `;
 
 export const Row = styled(AntdRow)`
@@ -156,6 +161,13 @@ export const Paragraph = styled.p`
   font-size: 60px;
   margin-top: 1rem;
   padding: 0 0 20px 0;
+
+  @media (max-width: 480px) {
+    font-size: 200px;
+  }
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 export const CardStyled = styled(Card)`
@@ -210,7 +222,7 @@ export const TodoListTitle = styled.h1`
   text-align: center;
 `;
 
-export const WarningText = styled.div`
+export const AlertText = styled.div`
   margin-bottom: 2rem;
   margin-top: 2rem;
   font-weight: bold;

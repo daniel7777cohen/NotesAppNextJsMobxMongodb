@@ -6,7 +6,7 @@ import { IStore, Note } from "../interfaces";
 
 export const HomePage = observer(({ notesStore }: IStore) => {
   const notes = notesStore.notes;
-  const handleDelete = async (id: number, index: number) => {
+  const handleDelete = async (id: string, index: number) => {
     try {
       await notesStore.deleteNote(id, index);
     } catch (error) {
@@ -21,6 +21,7 @@ export const HomePage = observer(({ notesStore }: IStore) => {
           {notes.map((note: Note, index: number) => {
             return (
               <CardDisplay
+                key={index}
                 index={index}
                 children
                 note={note}
@@ -41,7 +42,7 @@ export const HomePage = observer(({ notesStore }: IStore) => {
         </div>
       )}
     </CardWrapper>
-)});
+  );
+});
 
 export default HomePage;
-

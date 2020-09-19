@@ -7,6 +7,7 @@ import {
   createNewNote,
 } from "../api";
 import { Note, Todo, TodoForm } from "../interfaces";
+import { computedFn, keepAlive } from "mobx-utils";
 
 export class NotesStore extends BaseStore {
   @observable notes: Note[] = [];
@@ -17,7 +18,7 @@ export class NotesStore extends BaseStore {
   }
 
   @action
-  async deleteNote(noteId: number, index: number) {
+  async deleteNote(noteId: string, index: number) {
     try {
       await deleteNote(noteId);
       runInAction(() => {
@@ -59,6 +60,29 @@ export class NotesStore extends BaseStore {
   @action getNoteById(noteId: string) {
     return this.notes.find((note) => note._id === noteId);
   }
+
+  @action getRecentUpdateDate = (note: Note) => {
+    return Math.max.apply(
+      Math,
+      note.todos.map((note) => {
+        return note.updatedAt;
+      })
+    );
+  };
+
+  // get getUnDoneTodos(note: Note) {
+  //   return computed(
+  //     () => note.todos.filter((todo) => !todo.checked).length
+  //   ).get();
+  // }
+  keepAliveOrOptions = {
+    keepAlive: true,
+  };
+  getUnDoneTodos = computedFn(function getUnDoneTodos(
+    note: Note
+  ) {
+    return note.todos.filter((todo) => !todo.checked).length;
+  });
 
   @action toggleTodoStatus(todo: Todo) {
     todo.checked = !todo.checked;
