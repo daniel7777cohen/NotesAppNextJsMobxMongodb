@@ -3,12 +3,12 @@ import { Todo, Note, TodoForm } from "./interfaces";
 
 export const fetchNotes = async () => {
   try {
-    const res = await axios.get("http://localhost:3000/api/notes");
+    const res = await axios.get("https://nots-app-next-js-mobx-mongodb-lhej1etsk.vercel.app/api/notes");
     let processedNotes = [] as any;
     if (res.data.success === true) {
       for (const note of res.data.notes) {
         const todoReponse = await axios.get(
-          `http://localhost:3000/api/items/get-item-by-note-id/${note._id}`
+          `https://nots-app-next-js-mobx-mongodb-lhej1etsk.vercel.app/api/items/get-item-by-note-id/notes/${note._id}`
         );
         const { title, createdAt, updatedAt, _id } = note;
         const todos = todoReponse.data.todos;

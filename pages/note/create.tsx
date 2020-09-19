@@ -1,9 +1,11 @@
 import EditNote from "../../components/create-note/CreateNote";
-import {  TodoForm } from "../../interfaces";
+import { TodoForm } from "../../interfaces";
 import { observer } from "mobx-react-lite";
 import { NotesStore } from "../../mobx/NotesStore";
 
 const NewNote = observer(({ notesStore }: { notesStore: NotesStore }) => {
+  const isNotesFull = notesStore.isNotesFull;
+  const IsNote = notesStore.isNotesFull;
   const handleSave = async ({
     title,
     todos,
@@ -21,7 +23,15 @@ const NewNote = observer(({ notesStore }: { notesStore: NotesStore }) => {
     }
   };
 
-  return <EditNote handleSave={handleSave}></EditNote>;
+  return (
+    <>
+      {isNotesFull ? (
+        <EditNote handleSave={handleSave}></EditNote>
+      ) : (
+        <div>hello</div>
+      )}
+    </>
+  );
 });
 
 export default NewNote;

@@ -78,9 +78,7 @@ export class NotesStore extends BaseStore {
   keepAliveOrOptions = {
     keepAlive: true,
   };
-  getUnDoneTodos = computedFn(function getUnDoneTodos(
-    note: Note
-  ) {
+  getUnDoneTodos = computedFn(function getUnDoneTodos(note: Note) {
     return note.todos.filter((todo) => !todo.checked).length;
   });
 
@@ -88,8 +86,8 @@ export class NotesStore extends BaseStore {
     todo.checked = !todo.checked;
   }
 
-  @computed get getNotesLength() {
-    return this.notes.length;
+  get isNotesFull() {
+    return this.notes.length >= 10;
   }
 
   @action getNotes() {
