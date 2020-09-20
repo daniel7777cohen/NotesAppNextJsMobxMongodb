@@ -36,9 +36,13 @@ export class NotesStore extends BaseStore {
     //   const newTodos =
     // })
   }
+  @action
   async fetchAndSetNotes() {
     const processedResponse = await fetchNotes();
-    this.setNotes(processedResponse);
+    console.log(processedResponse);
+    runInAction(() => {
+      this.notes = processedResponse;
+    });
   }
 
   @action

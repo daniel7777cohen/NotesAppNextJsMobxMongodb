@@ -5,7 +5,7 @@ import { NotesStore } from "../../mobx/NotesStore";
 
 const NewNote = observer(({ notesStore }: { notesStore: NotesStore }) => {
   const isNotesFull = notesStore.isNotesFull;
-  const IsNote = notesStore.isNotesFull;
+
   const handleSave = async ({
     title,
     todos,
@@ -25,7 +25,7 @@ const NewNote = observer(({ notesStore }: { notesStore: NotesStore }) => {
 
   return (
     <>
-      {isNotesFull ? (
+      {!isNotesFull ? (
         <EditNote handleSave={handleSave}></EditNote>
       ) : (
         <div>You have reached the maximum amount of notes</div>
