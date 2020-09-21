@@ -14,14 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case "PUT":
       try {
-        const item = Item.findById(item_id);
-        if (!item) {
-          return res
-            .status(400)
-            .json({ success: false, msg: "unable to find the relevant item" });
-        }
-        
-        const items = await Item.findByIdAndUpdate(
+         await Item.findByIdAndUpdate(
           item_id,
           { checked },
           {
@@ -30,7 +23,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           }
         );
 
-        return res.status(201).json({ success: true, data: items });
+        return res.status(201).json({ success: true});
       } catch (error) {
         res.status(400).json({ success: error.message });
       }

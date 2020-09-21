@@ -43,7 +43,7 @@ export class NotesStore extends BaseStore {
       const res = await createNewNote(title, todos);
       if (res.success) {
         runInAction(() => {
-          this.notes.push(res.newNote);
+          this.notes.push(res.processedNewNote);
         });
       }
       return res.success;

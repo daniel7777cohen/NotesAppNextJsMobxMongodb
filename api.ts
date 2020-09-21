@@ -7,70 +7,25 @@ export const fetchNotes = async (): Promise<{
 }> => {
   const notesResponse = await axios.get("http://localhost:3000/api/notes");
   if (!notesResponse.data.success === true) return { success: false };
-  const { notes } = notesResponse.data;
-  const { processedNotes, success } = await fetchAndAddTodosToNote(notes);
+
+  const { success, processedNotes } = notesResponse.data;
   return { success, processedNotes };
-};
-
-const fetchAndAddTodosToNote = async (
-  notes: NoteResponse[]
-): Promise<{ success: boolean; processedNotes?: Note[] }> => {
-  let processedNotes = [] as Note[];
-
-  for (const note of notes) {
-    const todoResponse = await axios.get(
-      `http://localhost:3000/api/items/get-items-by-note-id/${note._id}`
-    );
-    if (!todoResponse.data.success) return { success: false };
-    const { todos } = todoResponse.data;
-    processedNotes.push({ ...note, todos });
-  }
-  return { success: true, processedNotes };
 };
 
 export const createNewNote = async (
   title: string,
   todos: Todo[]
-): Promise<{ success: boolean; newNote?: Note }> => {
+): Promise<{ success: boolean; processedNewNote?: Note }> => {
   const noteResponse = await axios.post("http://localhost:3000/api/notes", {
     title,
+    todos,
   });
   if (!noteResponse.data.success === true) return { success: false };
-  const { newNote } = noteResponse.data;
-  const { processedNewTodos, success } = await getProcessedNewTodos(
-    todos,
-    newNote._id
-  );
+  const { processedNewNote, success } = noteResponse.data;
   return {
     success,
-    newNote: {
-      ...newNote,
-      todos: processedNewTodos,
-    },
+    processedNewNote,
   };
-};
-
-const getProcessedNewTodos = async (
-  todos: Todo[],
-  noteId: string
-): Promise<{ processedNewTodos?: Todo[]; success: boolean }> => {
-  const processedNewTodos = [] as Todo[];
-
-  let success = true;
-  for (const todo of todos) {
-    const { description, checked } = todo;
-    const todoResponse = await axios.post(
-      `http://localhost:3000/api/items/add-item-to-note/${noteId}`,
-      {
-        description,
-        checked,
-      }
-    );
-    if (!todoResponse.data.success) return { success: false };
-    const { newTodo } = todoResponse.data;
-    processedNewTodos.push(newTodo);
-  }
-  return { processedNewTodos, success };
 };
 
 export const deleteNote = async (note_id: string): Promise<boolean> => {
