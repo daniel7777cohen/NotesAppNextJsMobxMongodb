@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-
 import {
   faTrashAlt,
   faThumbsDown,
@@ -8,7 +7,6 @@ import {
 import { FontAwesomeIcon as FAI } from "@fortawesome/react-fontawesome";
 import { ItemWrapper } from "../../styled-components";
 import { Todo } from "../../interfaces";
-import * as getStores from "../../mobx";
 import { observer } from "mobx-react-lite";
 import { MobXProviderContext } from "mobx-react";
 
@@ -27,8 +25,6 @@ const TodoDisplay = observer(
     const {
       notesStore: { toggleTodoStatus },
     } = useContext(MobXProviderContext);
-
-    // const notesStore = getStores.getNotesStore();
 
     const onChange = (todo: Todo) => {
       toggleTodoStatus(todo);

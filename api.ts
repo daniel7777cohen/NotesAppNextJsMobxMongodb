@@ -1,84 +1,97 @@
 import axios from "axios";
-import { Todo, Note, TodoForm } from "./interfaces";
+import { Todo, Note, NoteResponse } from "./interfaces";
 
-export const fetchNotes = async () => {
-  try {
-    const res = await axios.get("/api/notes");
-    let processedNotes = [] as any;
-    if (res.data.success === true) {
-      for (const note of res.data.notes) {
-        const todoReponse = await axios.get(
-          `/api/items/get-item-by-note-id/${note._id}`
-        );
-        const { title, createdAt, updatedAt, _id } = note;
-        const todos = todoReponse.data.todos;
-
-        processedNotes.push({ _id, title, createdAt, updatedAt, todos });
-      }
-    }
-    return processedNotes;
-  } catch (error) {
-    console.error(error); //handle errors!!!
-    return {} as Note[];
-  }
+export const fetchNotes = async (): Promise<{
+  success: boolean;
+  processedNotes?: Note[];
+}> => {
+  const notesResponse = await axios.get("http://localhost:3000/api/notes");
+  if (!notesResponse.data.success === true) return { success: false };
+  const { notes } = notesResponse.data;
+  const { processedNotes, success } = await fetchAndAddTodosToNote(notes);
+  return { success, processedNotes };
 };
 
-export const createNewNote = async (title: string, todos: TodoForm[]) => {
-  const noteResponse = await axios.post("/api/notes", {
+const fetchAndAddTodosToNote = async (
+  notes: NoteResponse[]
+): Promise<{ success: boolean; processedNotes?: Note[] }> => {
+  let processedNotes = [] as Note[];
+
+  for (const note of notes) {
+    const todoResponse = await axios.get(
+      `http://localhost:3000/api/items/get-items-by-note-id/${note._id}`
+    );
+    if (!todoResponse.data.success) return { success: false };
+    const { todos } = todoResponse.data;
+    processedNotes.push({ ...note, todos });
+  }
+  return { success: true, processedNotes };
+};
+
+export const createNewNote = async (
+  title: string,
+  todos: Todo[]
+): Promise<{ success: boolean; newNote?: Note }> => {
+  const noteResponse = await axios.post("http://localhost:3000/api/notes", {
     title,
   });
-  debugger;
-  if (noteResponse.data.success === true) {
-    const { newNote } = noteResponse.data;
-    debugger;
-    const processedNewTodos = await getProcessedNewTodos(todos, newNote._id);
-    debugger;
-    return {
+  if (!noteResponse.data.success === true) return { success: false };
+  const { newNote } = noteResponse.data;
+  const { processedNewTodos, success } = await getProcessedNewTodos(
+    todos,
+    newNote._id
+  );
+  return {
+    success,
+    newNote: {
       ...newNote,
       todos: processedNewTodos,
-    };
-  }
+    },
+  };
 };
 
-const getProcessedNewTodos = async (todos: TodoForm[], noteId: string) => {
+const getProcessedNewTodos = async (
+  todos: Todo[],
+  noteId: string
+): Promise<{ processedNewTodos?: Todo[]; success: boolean }> => {
   const processedNewTodos = [] as Todo[];
 
+  let success = true;
   for (const todo of todos) {
     const { description, checked } = todo;
     const todoResponse = await axios.post(
-      `/api/items/add-item-to-note/${noteId}`,
+      `http://localhost:3000/api/items/add-item-to-note/${noteId}`,
       {
         description,
         checked,
       }
     );
-    if (todoResponse.data.success) {
-      const { newTodo } = todoResponse.data;
-      processedNewTodos.push(newTodo);
-    }
+    if (!todoResponse.data.success) return { success: false };
+    const { newTodo } = todoResponse.data;
+    processedNewTodos.push(newTodo);
   }
-
-  return processedNewTodos;
-};
-export const getNoteById = async (note_id: string) => {
-  const res = await axios.get(`/api/notes/${note_id}`);
-  return res.data;
+  return { processedNewTodos, success };
 };
 
-export const getTodosByNoteId = async (note_id: string) => {
-  const res = await axios.get(`/api/items/get-item-by-note-id/${note_id}`);
-  return res.data;
+export const deleteNote = async (note_id: string): Promise<boolean> => {
+  const deleteNoteResponse = await axios.delete(
+    `http://localhost:3000/api/notes/${note_id}`
+  );
+
+  return deleteNoteResponse.data.success;
 };
 
-export const deleteNote = async (note_id: string) => {
-  const res = await axios.delete(`/api/notes/${note_id}`);
-  return res.data;
-};
-
-export const saveTodosStatuses = async (todos: Todo[]) => {
+export const saveTodosStatuses = async (todos: Todo[]): Promise<boolean> => {
+  let success = true;
   for (const todo of todos) {
-    const todoResponse = await axios.put(`/api/items/edit-item/${todo._id}`, {
-      checked: todo.checked,
-    });
+    const todoResponse = await axios.put(
+      `http://localhost:3000/api/items/edit-item/${todo._id}`,
+      {
+        checked: todo.checked,
+      }
+    );
+    if (todoResponse.data.success === false) success = false;
   }
+
+  return success;
 };

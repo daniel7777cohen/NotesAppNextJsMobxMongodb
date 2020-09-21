@@ -8,65 +8,61 @@ import { configure } from "mobx";
 import { Provider, useStaticRendering, observer } from "mobx-react";
 import * as getStores from "../mobx";
 import { Store, Note } from "../interfaces";
-import { useEffect } from "react";
+import { fetchNotes } from "../api";
+import { NextPageContext, NextComponentType } from "next";
 
 const isServer = !process.browser;
 
 configure({ enforceActions: "observed" });
 useStaticRendering(isServer); // NOT `true` value
 
-const MyApp = observer(
-  ({
-    Component,
-    store,
-    pageProps,
-    notes,
-  }: AppProps & { store: Store; notes: Note[] }) => {
-    useEffect(() => {
-      async function fetchData() {
-        await store.notesStore.fetchAndSetNotes();
-      }
-      fetchData();
-    }, []);
-    return (
-      <div>
-        <Provider {...store}>
-          <Layout>
-            <Component {...pageProps} {...store}></Component>
-          </Layout>
-        </Provider>
+const MyApp = ({
+  Component,
+  store,
+  pageProps,
+  processedNotes,
+}: AppProps & { store: Store; processedNotes: Note[] }) => {
+  store.notesStore.setNotes(processedNotes);
+  return (
+    <div>
+      <Provider {...store}>
+        <Layout>
+          <Component {...pageProps} {...store}></Component>
+        </Layout>
+      </Provider>
 
-        <style global jsx>{`
-          html,
-          body,
-          body > div:first-child,
-          div#__next,
-          div#__next > div,
-          div#__next > div > div {
-            height: 100%;
-          }
-        `}</style>
-      </div>
-    );
+      <style global jsx>{`
+        html,
+        body,
+        body > div:first-child,
+        div#__next,
+        div#__next > div,
+        div#__next > div > div {
+          height: 100%;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+MyApp.getInitialProps = async ({
+  Component,
+  ctx,
+}: {
+  Component: NextComponentType<NextPageContext, any, {}>;
+  ctx: NextPageContext;
+}) => {
+  const notesResponse = await fetchNotes();
+  let pageProps = {};
+  if (Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
   }
-);
-
-// MyApp.getInitialProps = async ({
-//   Component,
-//   ctx,
-// }: {
-//   Component: any;
-//   ctx: any;
-// }) => {
-//   // const notesStore = getStores.getNotesStore();
-//   // await notesStore.fetchAndSetNotes();
-//   // const notes = notesStore.getNotes();
-//   let pageProps = {};
-//   if (Component.getInitialProps) {
-//     pageProps = await Component.getInitialProps(ctx);
-//   }
-
-//   return { pageProps };
-// };
+  if (notesResponse.success) {
+    const { processedNotes } = notesResponse;
+    return { pageProps, processedNotes };
+  }
+  const processedNotes = {} as Note[];
+  return { pageProps, processedNotes };
+};
 
 export default withMobx(getStores)(MyApp);

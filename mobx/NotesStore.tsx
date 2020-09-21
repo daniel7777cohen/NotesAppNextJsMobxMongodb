@@ -6,7 +6,7 @@ import {
   saveTodosStatuses,
   createNewNote,
 } from "../api";
-import { Note, Todo, TodoForm } from "../interfaces";
+import { Note, Todo } from "../interfaces";
 import { computedFn, keepAlive } from "mobx-utils";
 
 export class NotesStore extends BaseStore {
@@ -18,54 +18,49 @@ export class NotesStore extends BaseStore {
   }
 
   @action
-  async deleteNote(noteId: string, index: number) {
+  async deleteNote(noteId: string, index: number): Promise<void> {
     try {
-      await deleteNote(noteId);
+      const success = await deleteNote(noteId);
       runInAction(() => {
-        this.notes.splice(index, 1);
+        if (success) this.notes.splice(index, 1);
       });
     } catch (error) {
-      runInAction(() => {});
+      runInAction(() => {
+        console.error(error);
+      });
     }
   }
 
   @action
-  async savetodosEdit(todos: Todo[]) {
-    await saveTodosStatuses(todos);
-    // runInAction(()=>{
-    //   const newTodos =
-    // })
-  }
-  @action
-  async fetchAndSetNotes() {
-    const processedResponse = await fetchNotes();
-    console.log(processedResponse);
-    runInAction(() => {
-      this.notes = processedResponse;
-    });
+  async saveTodosEdit(todos: Todo[]): Promise<boolean> {
+    const success = await saveTodosStatuses(todos);
+    return success;
   }
 
   @action
-  async addNote(title: string, todos: TodoForm[]) {
+  async addNote(title: string, todos: Todo[]): Promise<boolean> {
     try {
-      const newNote = await createNewNote(title, todos);
-      runInAction(() => {
-        this.notes.push(newNote);
-      });
+      const res = await createNewNote(title, todos);
+      if (res.success) {
+        runInAction(() => {
+          this.notes.push(res.newNote);
+        });
+      }
+      return res.success;
     } catch (error) {
-      runInAction(() => {});
+      return false;
     }
   }
 
-  @action setNotes(notes: Note[]) {
+  @action setNotes(notes: Note[]): void {
     this.notes = notes;
   }
 
-  @action getNoteById(noteId: string) {
+  @action getNoteById(noteId: string): Note {
     return this.notes.find((note) => note._id === noteId);
   }
 
-  @action getRecentUpdateDate = (note: Note) => {
+  @action getRecentUpdateDate = (note: Note): number => {
     return Math.max.apply(
       Math,
       note.todos.map((note) => {
@@ -74,33 +69,25 @@ export class NotesStore extends BaseStore {
     );
   };
 
-  // get getUnDoneTodos(note: Note) {
-  //   return computed(
-  //     () => note.todos.filter((todo) => !todo.checked).length
-  //   ).get();
-  // }
-  keepAliveOrOptions = {
-    keepAlive: true,
-  };
-  getUnDoneTodos = computedFn(function getUnDoneTodos(note: Note) {
-    return note.todos.filter((todo) => !todo.checked).length;
-  });
+  @computed get totalNotes(): number {
+    return this.notes.length;
+  }
 
-  @action toggleTodoStatus(todo: Todo) {
+  @action toggleTodoStatus(todo: Todo): void {
     todo.checked = !todo.checked;
   }
 
-  get isNotesFull() {
-    return this.notes.length >= 10;
+  @action
+  isTitleExists(newTitle: string): boolean {
+    return this.notes.filter((note) => note.title === newTitle).length === 0;
   }
 
-  @action getNotes() {
-    return this.notes;
+  getUnDoneTodos = computedFn(function getUnDoneTodos(note: Note): number {
+    return note.todos.filter((todo) => !todo.checked).length;
+  });
+  get isAddAvailable(): boolean {
+    return this.notes.length < 10;
   }
 }
 
-// Make sure the store’s unique name
-// AND must be same formula
-// Example: getUserStore => userStore
-// Example: getProductStore => productStore
 export const getNotesStore = getOrCreateStore("notesStore", NotesStore);

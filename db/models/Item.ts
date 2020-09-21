@@ -17,6 +17,10 @@ const ItemSchema = new mongoose.Schema(
       required: [true, "please make sure request contains checked property"],
       default: false,
     },
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
 
     createdAt: Number,
     updatedAt: Number,

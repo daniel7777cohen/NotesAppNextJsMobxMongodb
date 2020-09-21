@@ -1,7 +1,5 @@
-import React, { useContext } from "react";
+import React from "react";
 import Link from "next/link";
-import moment from "moment";
-import "moment-timezone";
 import {
   CardStyled,
   Title,
@@ -9,14 +7,16 @@ import {
   Col,
 } from "../../styled-components";
 import { useState } from "react";
-import { ICardDisplay } from "../../interfaces";
+import { CardDisplayProps } from "../../interfaces";
 import { observer } from "mobx-react-lite";
 import DeleteWarning from "./DeleteWarning";
 import CardBody from "./CardBody";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon as FAI } from "@fortawesome/react-fontawesome";
 
 const CardDisplay = observer(
-  ({ children, note, index, handleDelete }: ICardDisplay) => {
-    const [isDeleting, setIsDeleting] = useState(false);
+  ({ children, note, index, handleDelete }: CardDisplayProps) => {
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     return (
       <Col key={index} span={8}>
@@ -26,6 +26,7 @@ const CardDisplay = observer(
               <Link href={`/note/${note._id}`}>
                 <a>
                   <h1>{note.title.toUpperCase()}</h1>
+                  <FAI size="2x" cursor={"pointer"} icon={faEdit}></FAI>
                 </a>
               </Link>
             </Title>

@@ -1,1 +1,1 @@
-export {getNotesStore} from './NotesStore';
+export { getNotesStore } from "./NotesStore";

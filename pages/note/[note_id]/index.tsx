@@ -1,22 +1,20 @@
 import { useState, useEffect } from "react";
 import TodoList from "../../../components/Layout/TodoList";
-import { TodoListTitle } from "../../../styled-components";
+import { TodoListTitle, Alert } from "../../../styled-components";
 import { observer } from "mobx-react-lite";
 import { NextPage, NextPageContext } from "next";
 import { NotesStore } from "../../../mobx/NotesStore";
+import { NoteDisplayProps, Note } from "../../../interfaces";
+import { Spin } from "antd";
 
-interface INoteDisplay {
-  note_id: string | string[];
-}
+interface Context extends NextPageContext, NoteDisplayProps {}
 
-interface Context extends NextPageContext, INoteDisplay {
-}
-
-export const NoteDisplay: NextPage<INoteDisplay> = observer(
+export const NoteDisplay: NextPage<NoteDisplayProps> = observer(
   ({ notesStore, note_id }: { note_id: string; notesStore: NotesStore }) => {
-
-    const [currentNote, setCurrentNote] = useState(null);
-    const [isPageLoaded, setIsPageLoaded] = useState(false);
+    const [currentNote, setCurrentNote] = useState<Note | null>(null);
+    const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false);
+    const [alert, setAlert] = useState<string>("");
+    const [success, setSuccess] = useState<boolean>(false);
 
     useEffect(() => {
       const noteToDisplay = notesStore.getNoteById(note_id);
@@ -24,9 +22,16 @@ export const NoteDisplay: NextPage<INoteDisplay> = observer(
       setIsPageLoaded(true);
     }, []);
 
-    const onSaveClicked = async () => {
+    const onSaveClicked = async (): Promise<void> => {
       try {
-        await notesStore.savetodosEdit(currentNote.todos);
+        setAlert("");
+        const isSaveSuccess = await notesStore.saveTodosEdit(currentNote.todos);
+        setSuccess(isSaveSuccess);
+        if (!isSaveSuccess) {
+          setAlert("something went wrong, current changes were not saved");
+        } else {
+          setAlert("current changes were saved successfully !");
+        }
       } catch (error) {}
     };
 
@@ -34,22 +39,25 @@ export const NoteDisplay: NextPage<INoteDisplay> = observer(
       <div>
         {isPageLoaded ? (
           <div>
-            <TodoListTitle>{notesStore.getNoteById(note_id).title.toUpperCase()}</TodoListTitle>
+            <TodoListTitle>{currentNote.title.toUpperCase()}</TodoListTitle>
             <TodoList
               onSaveClicked={onSaveClicked}
-              todos={notesStore.getNoteById(note_id).todos}
+              todos={currentNote.todos}
               isViewPage={true}
             ></TodoList>
-            <br />
+            {alert && (
+              <Alert message={alert} type={success ? "success" : "error"} />
+            )}
           </div>
-        ) : null}
+        ) : (
+          <Spin size="large" />
+        )}
       </div>
     );
   }
 );
 
 NoteDisplay.getInitialProps = async ({ query: { note_id } }: Context) => {
-
   return { note_id };
 };
 

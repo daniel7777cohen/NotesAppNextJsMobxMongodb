@@ -1,12 +1,13 @@
 import styled from "styled-components";
 import { FontAwesomeIcon as FAI } from "@fortawesome/react-fontawesome";
-import {
-  faCheck,
-  faTrashAlt,
-  faAlignRight,
-} from "@fortawesome/free-solid-svg-icons";
 import { Row as AntdRow, Col as AntdCol } from "antd";
-import { Card, Button as AntdButton, Layout as AntdLayout } from "antd";
+import {
+  Card,
+  Button as AntdButton,
+  Layout as AntdLayout,
+  Alert as alertAntD,
+} from "antd";
+import { ButtonProps } from "../interfaces";
 
 const { Footer } = AntdLayout;
 
@@ -17,6 +18,12 @@ export const Input = styled.input`
   border: 0px;
   margin-bottom: 3rem;
   background-color: white;
+`;
+
+export const Alert = styled(alertAntD)`
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
 `;
 
 export const DateText = styled.span`
@@ -38,9 +45,12 @@ export const Box = styled.div`
   }
 `;
 
-interface ButtonProps {
-  isSavedButton?: boolean;
-}
+export const NotesTotal = styled.div`
+  margin-left: 1rem;
+  font-weight: bold;
+  font-size: 30px;
+  display: inline-block;
+`;
 
 export const Button = styled.button<ButtonProps>`
   color: white;
@@ -52,7 +62,8 @@ export const Button = styled.button<ButtonProps>`
   cursor: pointer;
   align-self: ${({ isSavedButton }) => (isSavedButton ? "center" : "baseline")};
   padding: 7px;
-  margin-left: ${({ isSavedButton }) => (isSavedButton ? "3.2rem" : "1rem")};
+  margin-left: ${({ isSavedButton, isRedirect }) =>
+    isSavedButton || isRedirect ? "0" : "1rem"};
   margin-bottom: ${({ isSavedButton }) => (isSavedButton ? "4rem" : "auto")};
   background: dodgerblue;
 `;
@@ -201,11 +212,15 @@ export const ButtonStyled = styled(AntdButton)`
   margin-top: 1rem;
 `;
 
+
 export const Title = styled.div`
   text-align: center;
   white-space: normal;
   min-height: 120px;
 
+  h1{
+    cursor:pointer;
+  }
   @media (max-width: 480px) {
     width: auto;
     max-height: 120px;
@@ -233,3 +248,4 @@ export const WarningButtonsWrapper = styled.div`
   display: flex;
   justify-content: space-evenly;
 `;
+

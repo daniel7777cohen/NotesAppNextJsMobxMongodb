@@ -1,7 +1,5 @@
 import Note from "../../../db/models/Note";
-import Item from "../../../db/models/Item";
 import { NextApiRequest, NextApiResponse } from "next";
-
 import connectDb from "../../../db/connection";
 
 connectDb();
@@ -13,11 +11,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET":
       try {
         const notes = await Note.find({}).where({ deleted: false });
-        res.status(200).json({ success: true, notes });
+        return res.status(200).json({ success: true, notes });
       } catch (error) {
-        res.status(400).json({ success: false });
+        return res.status(400).json({ success: false });
       }
-      break;
     case "POST":
       try {
         const { title } = req.body;
@@ -35,14 +32,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const newNote = await Note.create(req.body);
-
         return res.status(201).send({ success: true, newNote });
       } catch (error) {
         console.log(error);
         return res.status(400).json({ success: false, error });
       }
     default:
-      res.status(400).json({ success: false });
-      break;
+      return res.status(400).json({ success: false });
   }
 };

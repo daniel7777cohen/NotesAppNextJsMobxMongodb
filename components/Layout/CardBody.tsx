@@ -14,7 +14,7 @@ const CardBody = observer(
 
     const undoneTodos = getUnDoneTodos(note);
 
-    const getDate = (dateType: string, note: Note) => {
+    const getDate = (dateType: string, note: Note): string => {
       return moment
         .unix(
           dateType === "createdAt" ? note.createdAt : getRecentUpdateDate(note)
